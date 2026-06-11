@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Next Chapter.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #050508;
+            --text-main: #F5F5FA;
+            --text-muted: #8A8A9D;
+            --accent-gold: #E8C373;
+            --accent-glow: rgba(232, 195, 115, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.8;
+            scroll-behavior: smooth;
+        }
+
+        /* Ambient Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Framework */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 4rem;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.6s ease, box-shadow 0.6s ease;
+        }
+        .glass:hover {
+            border-color: rgba(232, 195, 115, 0.2);
+            box-shadow: 0 20px 60px var(--accent-glow);
+        }
+
+        /* Typography Base */
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+        
+        .accent {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .hinglish-quote {
+            font-family: var(--font-heading);
+            font-style: italic;
+            color: var(--accent-gold);
+            opacity: 0.95;
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 4rem 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Cinematic Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+            transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Layout Structure */
+        section {
+            padding: 8rem 10vw;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            font-weight: 300;
+        }
+
+        /* Story Text Segments */
+        .story-text {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 300;
+            text-align: justify;
+            margin-bottom: 2.5rem;
+            line-height: 2.1;
+        }
+
+        /* Compatibility Form Engine */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 3.5rem;
+        }
+
+        .form-label {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        /* Custom Sleek Textareas */
+        textarea, input[type="text"] {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 1.05rem;
+            outline: none;
+            transition: all 0.4s ease;
+            resize: vertical;
+        }
+        textarea:focus, input[type="text"]:focus {
+            border-color: var(--accent-gold);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Custom Radio Buttons */
+        .radio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .radio-option {
+            position: relative;
+            display: block;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+        }
+
+        .radio-option input[type="radio"]:checked ~ .radio-card {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            border-color: var(--accent-gold);
+            font-weight: 500;
+        }
+
+        .radio-option:hover .radio-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(232, 195, 115, 0.4);
+        }
+
+        /* Buttons */
+        .action-btn {
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: var(--font-body);
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px var(--accent-glow);
+        }
+
+        .submit-btn {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            width: 100%;
+            border: none;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        /* The Final Question Gate */
+        .final-gate {
+            text-align: center;
+            margin-top: 10rem;
+            margin-bottom: 10rem;
+        }
+
+        .final-question {
+            font-size: 3.5rem;
+            font-family: var(--font-heading);
+            color: #fff;
+            margin-bottom: 3rem;
+            line-height: 1.2;
+        }
+
+        .gate-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .yes-btn {
+            background: var(--text-main);
+            color: var(--bg-deep);
+            border: none;
+            padding: 1.5rem 4rem;
+            font-size: 1.5rem;
+            font-family: var(--font-heading);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.4s;
+        }
+        .yes-btn:hover {
+            background: var(--accent-gold);
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .no-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem 3rem;
+            font-size: 1.2rem;
+            font-family: var(--font-body);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #success-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-deep);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            section { padding: 6rem 6vw; }
+            .glass { padding: 2rem 1.5rem; }
+            .radio-grid { grid-template-columns: 1fr; }
+            .gate-buttons { flex-direction: column; }
+            .final-question { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <section class="hero reveal">
+        <h1 style="font-size: 1.2rem; letter-spacing: 4px; color: var(--accent-gold); margin-bottom: 2rem; text-transform: uppercase;">A Month of Us</h1>
+        <h1>The Next <span class="accent">Chapter</span></h1>
+        <p>We started this as a quiet 'maybe'. But over the last thirty days, you have turned into my absolute certainty.</p>
+        <button class="action-btn" onclick="document.getElementById('reflection').scrollIntoView();">Begin the Journey ↓</button>
+    </section>
+
+    <section id="reflection" class="reveal">
+        <div class="glass">
+            <h2 style="font-size: 2.8rem; text-align: center; margin-bottom: 3rem;">Through My Lens</h2>
+            <div class="story-text">
+                When I look through my camera lens, I am constantly calculating how to frame the perfect shot, adjusting the lighting, and searching for the right focus. I spend hours editing, trying to make the final render look flawless. But then, you walked into my life. 
+                <br><br>
+                With you, there is no framing needed. No amount of editing, no filter, and no technical adjustment could ever make my reality more beautiful than it already is when you are sitting beside me. You are the only masterpiece I never had to adjust. In just one month, you have entirely rewritten the script of my life.
+            </div>
+            <p class="hinglish-quote">"Tujhe dekhte hi mere saare khwaab haqeeqat banne lagte hain."</p>
+        </div>
+    </section>
+
+    <section class="reveal">
+        <h2 style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">The Alignment</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 4rem;">Before we turn the page, I want to know your heart. Please answer these honestly.</p>
+
+        <div class="quiz-container">
+            <form action="https://api.web3forms.com/submit" method="POST" id="commitment-form">
+                
+                <input type="hidden" name="access_key" value="17994136-8dab-4daf-ac42-cb938d263e7c">
+                <input type="hidden" name="subject" value="New Commitment Responses from Your Girl ❤️">
+
+                <div class="glass form-group reveal">
+                    <label class="form-label">1. Looking back at our first 30 days, what is the exact moment you realized we had something special?</label>
+                    <textarea name="q1_favorite_moment" rows="4" placeholder="Tell me your favorite memory..." required></textarea>
+                </div>
+
+                <div class="glass form-group reveal">
+                    <label class="form-label">2. When my days get chaotic and heavy, do you feel like you are my safe space?</label>
+                    <div class="radio-grid">
+                        <label class="radio-option">
+                            <input type="radio" name="q2_safe_space" value="Yes, I want to protect your peace." required>
+                            <div class="radio-card">Yes, I want to protect your peace.</div>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="q2_safe_space" value="I am still learning how, but I will try.">
+                            <div class="radio-card">I am still learning how, but I will try.</div>
+                        </label>
+                    </div>
+                </div>
+
+                <p class="hinglish-quote reveal">"Meri zindagi ki har frame mein sirf tu hi perfect fit hoti hai."</p>
+
+                <div class="glass form-group reveal">
+                    <label class="form-label">3. If we commit to this, it means fighting the problem, never each other. Are you ready for that kind of teamwork?</label>
+                    <div class="radio-grid">
+                        <label class="radio-option">
+                            <input type="radio" name="q3_teamwork" value="Always us against the problem." required>
+                            <div class="radio-card">Always us against the problem.</div>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="q3_teamwork" value="Yes, but promise to be patient with me.">
+                            <div class="radio-card">Yes, but promise to be patient with me.</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="glass form-group reveal">
+                    <label class="form-label">4. What is one beautiful dream or goal you genuinely want us to achieve together in the future?</label>
+                    <textarea name="q4_shared_dream" rows="4" placeholder="It can be big or small..." required></textarea>
+                </div>
+                
+                <p class="hinglish-quote reveal">"Tu mere dil ka sabse keemti hissa hai."</p>
+
+                <div class="glass form-group reveal" style="border-color: rgba(232, 195, 115, 0.3);">
+                    <label class="form-label" style="color: var(--accent-gold);">5. The Trial Month is officially over. Are you ready to upgrade this to a serious, lifetime commitment?</label>
+                    <div class="radio-grid">
+                        <label class="radio-option">
+                            <input type="radio" name="q5_commitment" value="Yes. I am completely yours." required>
+                            <div class="radio-card" style="font-size: 1.1rem;">Yes. I am completely yours.</div>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="q5_commitment" value="I never want to leave your side.">
+                            <div class="radio-card" style="font-size: 1.1rem;">I never want to leave your side.</div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="action-btn submit-btn reveal">Seal & Lock My Answers 💌</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="reveal">
+        <div class="glass" style="max-width: 900px; margin: 0 auto;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 2rem; text-align: center; color: var(--accent-gold);">To My Entire Future</h2>
+            <div class="story-text" style="text-align: center;">
+                My beautiful <strong>Betuu</strong>, my brilliant Krinuu...<br><br>
+                When we decided to test this out a month ago, I thought I was just opening a new chapter. I didn't realize you were going to become my entire book. I don't just want the easy dates; I want your growth, your silence, your chaos, and your absolute peace. I want to build a legacy with you. You are my home, my anchor, and my greatest blessing. I am ready to close the trial, and start the forever. You are my masterpiece, <strong>Baby</strong>.
+            </div>
+            <p class="hinglish-quote">"Tere hone se hi mera aaj aur aane wala kal mukammal hai."</p>
+        </div>
+    </section>
+
+    <section class="reveal final-gate">
+        <p class="hinglish-quote" style="font-size: 1.8rem;">"Tu meri aakhri manzil aur mera sabse khoobsurat safar hai."</p>
+        <h1 class="final-question">Will you officially be mine, for a lifetime?</h1>
+        
+        <div class="gate-buttons">
+            <button class="yes-btn" onclick="triggerYes()">YES, I'M YOURS</button>
+            <button class="no-btn" id="runaway-btn" onmouseover="dodgeCursor()">NOT READY YET</button>
+        </div>
+    </section>
+
+    <div id="success-overlay">
+        <h1 style="font-size: 4rem; color: var(--accent-gold); font-family: var(--font-heading); margin-bottom: 1rem; text-align: center;">Forever Secured. 💍</h1>
+        <p style="font-size: 1.5rem; color: var(--text-main); font-weight: 300;">Welcome to the rest of our lives, Krinuu.</p>
+    </div>
+
+    <script>
+        // 1. Particle Background System
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.15;
+                this.vy = (Math.random() - 0.5) * 0.15;
+                this.radius = Math.random() * 1.5 + 0.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > height) this.vy = -this.vy;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(232, 195, 115, 0.4)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 70; i++) particles.push(new Particle());
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // 2. Cinematic Scroll Reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+        reveals.forEach(reveal => observer.observe(reveal));
+
+        // 3. Web3Forms Handler Logic
+        const form = document.getElementById('commitment-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.querySelector('.submit-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "Sealing our answers... ⏳";
+            
+            const formData = new FormData(form);
+            
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(async (response) => {
+                if (response.status == 200) {
+                    btn.innerHTML = "Answers Sealed Safely. ✨";
+                    btn.style.background = "#fff";
+                    btn.style.color = "var(--bg-deep)";
+                } else {
+                    btn.innerHTML = "Error saving. Tell me in person!";
+                }
+            })
+            .catch(error => {
+                btn.innerHTML = "Answers Saved Locally. ✨";
+            });
+        });
+
+        // 4. Playful "No" Button Dodge
+        const noBtn = document.getElementById("runaway-btn");
+        function dodgeCursor() {
+            const x = Math.random() * (window.innerWidth - noBtn.clientWidth - 50);
+            const y = Math.random() * (window.innerHeight - noBtn.clientHeight - 50);
+            noBtn.style.position = "fixed";
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+            noBtn.style.zIndex = "999";
+        }
+
+        // 5. Final Celebration Trigger
+        function triggerYes() {
+            const overlay = document.getElementById('success-overlay');
+            overlay.style.visibility = 'visible';
+            overlay.style.opacity = '1';
+            fireConfetti();
+            setInterval(fireConfetti, 2000); // Keeps firing forever
+        }
+
+        function fireConfetti() {
+            const colors = ['#E8C373', '#FFFFFF', '#8A8A9D'];
+            for(let i=0; i<80; i++) {
+                let conf = document.createElement('div');
+                conf.style.position = 'fixed';
+                conf.style.width = Math.random() * 8 + 6 + 'px';
+                conf.style.height = conf.style.width;
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.top = '-10px';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '0%';
+                conf.style.opacity = Math.random() + 0.5;
+                conf.style.transform = `rotate(${Math.random() * 360}deg)`;
+                conf.style.zIndex = '10001';
+                document.getElementById('success-overlay').appendChild(conf);
+
+                let fallDuration = Math.random() * 3 + 2;
+                conf.animate([
+                    { transform: `translate3d(0,0,0) rotate(0deg)` },
+                    { transform: `translate3d(${Math.random()*200 - 100}px, 100vh, 0) rotate(720deg)` }
+                ], {
+                    duration: fallDuration * 1000,
+                    easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+                }).onfinish = () => conf.remove();
+            }
+        }
+    </script>
+</body>
+</html>
